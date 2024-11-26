@@ -1,18 +1,40 @@
+#!/usr/bin/python3
+
+""" Contains makeChange function. """
+
+
 def makeChange(coins, total):
-    """Returns the fewest number of coins needed to make a total."""
-    # If total is less than or equal to 0, return 0
+    """
+    Given a pile of coins of different values, determine the fewest number
+    of coins needed to meet a given amount total.
+
+    Args:
+        coins (list of int): The values of the coins in the pile.
+        total (int): The total amount of money to make change for.
+
+    Returns:
+        int: The fewest number of coins needed to meet the total.
+    """
     if total <= 0:
         return 0
 
-    # Create a DP array, initialized to infinity
-    dp = [float('inf')] * (total + 1)
-    dp[0] = 0  # 0 coins needed to make total 0
+    if coins is None or len(coins) == 0:
+        return -1
 
-    # Iterate over each coin
+    # Sort coins in descending order to start with the largest coin
+    coins.sort(reverse=True)
+    count = 0
+
     for coin in coins:
-        for i in range(coin, total + 1):
-            # check if using this coin reduces the number of coins
-            dp[i] = min(dp[i], dp[i - coin] + 1)
+        if total == 0:
+            break
+        # Use as many of current coin as possible while total is greater
+        # move to the next coin when current coin cannot be used
+        while total >= coin:
+            total -= coin  # Subtract the coin value from the total
+            count += 1  # Increment the count of coins used
 
-    # If dp[total] is still infinity, it's not possible to form the total
-    return dp[total] if dp[total] != float('inf') else -1
+    if total != 0:  # If we cannot make the exact change, return -1
+        return -1
+
+    return count
