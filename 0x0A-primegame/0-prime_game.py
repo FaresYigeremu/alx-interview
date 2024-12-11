@@ -1,47 +1,47 @@
 #!/usr/bin/python3
+"""
+Define isWinner function, a solution to the Prime Game problem
+"""
+
+
+def primes(n):
+    """Return list of prime numbers between 1 and n inclusive
+       Args:
+        n (int): upper boundary of range. lower boundary is always 1
+    """
+    prime = []  # List to store prime numbers
+    sieve = [True] * (n + 1)  # Boolean array to mark prime numbers
+    for p in range(2, n + 1):
+        if (sieve[p]):  # If p is a prime number
+            prime.append(p)  # Add p to the list of primes
+            for i in range(p, n + 1, p):
+                sieve[i] = False  # Mark multiples of p as non-prime
+    return prime
+
+
 def isWinner(x, nums):
-    # o generate prime numbers up to n using the Sieve of Eratosthenes
-    def sieve_of_eratosthenes(n):
-        primes = [True] * (n + 1)
-        primes[0], primes[1] = False, False  # 0 and 1 are not prime numbers
-        for i in range(2, int(n**0.5) + 1):
-            if primes[i]:
-                for j in range(i * i, n + 1, i):
-                    primes[j] = False
-        return [i for i in range(2, n + 1) if primes[i]]
-
-    # Function to simulate the game for a given n
-    def play_game(n):
-        primes = sieve_of_eratosthenes(n)
-        numbers = set(range(1, n + 1))
-        turn = 0  # Maria starts first (0 for Maria, 1 for Ben)
-        while primes:
-            # Maria or Ben picks the first available prime
-            prime = primes.pop(0)
-            # Remove the prime and its multiples
-            numbers -= set(range(prime, n + 1, prime))
-            # Recalculate the primes for the remaining numbers
-            primes = [p for p in sieve_of_eratosthenes(n) if p in numbers]
-            # Switch turns
-            turn = 1 - turn
-
-        return "Maria" if turn == 1 else "Ben"
-
-    # Count the number of wins for Maria and Ben
-    maria_wins = 0
-    ben_wins = 0
-
-    for n in nums:
-        winner = play_game(n)
-        if winner == "Maria":
-            maria_wins += 1
-        else:
-            ben_wins += 1
-
-    # Return the player with the most wins
-    if maria_wins > ben_wins:
-        return "Maria"
-    elif ben_wins > maria_wins:
-        return "Ben"
-    else:
+    """
+    Determines winner of Prime Game
+    Args:
+        x (int): no. of rounds of game
+        nums (int): upper limit of range for each round
+    Return:
+        Name of winner (Maria or Ben) or None if winner cannot be found
+    """
+    if x is None or nums is None or x == 0 or nums == []:
         return None
+
+    Maria = Ben = 0  # Initialize scores for Maria and Ben
+
+    for i in range(x):  # Loop through each round
+        prime = primes(nums[i])  # Get the list of primes for the current round
+        if len(prime) % 2 == 0:  # If the number of primes is even
+            Ben += 1  # Ben wins this round
+        else:
+            Maria += 1  # Maria wins this round
+
+    if Maria > Ben:
+        return 'Maria'  # Maria is the overall winner
+    elif Ben > Maria:
+        return 'Ben'  # Ben is the overall winner
+    return None  # Return None if the game is a tie
